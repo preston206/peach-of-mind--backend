@@ -4,7 +4,7 @@
   "description": "parenting app for tracking child's allergies",
   "main": "server.js",
   "scripts": {
-    "test": "CI=true jest"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
