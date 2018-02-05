@@ -1,0 +1,14 @@
+language: node_js
+node_js: node
+deploy:
+  provider: heroku
+  api_key:
+    secure: j2AJ3JY9KZJQNdhXWUfV630cc0DJr99cD0J6wkcg4MJa+nU4h5lpohkf6iJxNMSqq/H6ZjjmKT/g6ivY9tqsEXrSQbHch5DBlQ5QQVuVCfEa2vUlXFsiAeRag/voi/Y0zp7wnzvwYAqYyPdk1bOBV4rw3B6xNrM13ZQKJJb1AZ/BGhX6XPNfPQqwvlYQH5dTOIpAaSqfRRONicd7uaEwI7KB3b1GQ9Lo4pBKIdD3BiV1X95/lTitZui/eNer7OTtTN3EpgDzsZQqFqKgUIeBXf7bipGuL9TdOmDQvX/Y878LjobSpXACySOL/KTG1x+kFU61ZMFndr/RTTUvmZgCxKmE/a/B/60Dn2xdcLoYHqBh9lBjQLohQc7eD88qwxcoSCNGcCJB+9cQPe74jfMgafNDu34Kiq/EJ0OdMqeoTJvxWmxne9xkrE2QfzGtbCsNczsuXkp70MSQgoCB31U2LfqhwDZhgdLPmlE2lmcudnxTwKqDbyIIs7Km8BXDSr/MW14t7E+jZCWtp/PJHnQenKMnNdnILpleLDWLAqV5ph4d0FhE7tbVtwscUbD/SSohrTMiBziPLVq7ZpKIi6gYsoK4DPfQL5TnMQKSl64NlEUfLyji0rW1D3+JosWXuGszpaXldXndpakVU+01ZOxvwL3DImuy2ngn3pYNDkDu03Y=
+  app: sleepy-castle-79477
+  on:
+    repo: preston206/peach-of-mind--backend
+    branch: master
+notifications:
+  email:
+    on_success: never
+    on_failure: never
