@@ -1,0 +1,30 @@
+{
+  "name": "peach-of-mind",
+  "version": "1.0.0",
+  "description": "parenting app for tracking child's allergies",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/preston206/peach-of-mind--backend.git"
+  },
+  "author": "Preston Roberts",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/preston206/peach-of-mind--backend/issues"
+  },
+  "homepage": "https://github.com/preston206/peach-of-mind--backend#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "mongoose": "^5.0.3"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^3.0.0",
+    "chance": "^1.0.13",
+    "jest": "^22.1.4"
+  }
+}
