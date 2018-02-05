@@ -100,7 +100,7 @@ let server;
 function startServer(db) {
     return new Promise((resolve, reject) => {
         mongoose.connect(db, err => {
-            // useMongoClient: true;
+            useMongoClient: true;
 
             console.log("connected to", db);
 
