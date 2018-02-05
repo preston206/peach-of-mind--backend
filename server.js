@@ -12,9 +12,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 // connecting to mongodb
-mongoose.connect(DATABASE_URL)
-    .then(() => console.log(`mongodb connected to ${PORT}`))
-    .catch(error => console.log(error));
+// mongoose.connect(DATABASE_URL)
+//     .then(() => console.log(`mongodb connected to ${PORT}`))
+//     .catch(error => console.log(error));
 
 // import model
 const { Parent } = require('./models/Parent');
@@ -91,6 +91,63 @@ app.delete('/delete-test/:id', (req, res) => {
         }));
 });
 
-app.listen(PORT, () => console.log(`server is listening on ${PORT}`));
+//////////
 
-module.exports = { app };
+//////////
+
+let server;
+
+function startServer(db) {
+    return new Promise((resolve, reject) => {
+        mongoose.connect(db, err => {
+            // useMongoClient: true;
+
+            console.log("connected to", db);
+
+            if (err) {
+                return reject(err);
+            }
+
+            server = app.listen(PORT, () => {
+                let getCurrentDateAndTime = new Date();
+                let timeStamp =
+                    getCurrentDateAndTime.getHours() +
+                    ":" +
+                    (getCurrentDateAndTime.getMinutes() < 10 ? '0' : '') +
+                    getCurrentDateAndTime.getMinutes();
+
+                console.log(timeStamp + ` - server is connected to mongo and listening on ${PORT}`);
+
+                resolve();
+            })
+                .on('error', err => {
+                    mongoose.disconnect();
+                    reject(err);
+                });
+        });
+    });
+};
+
+function stopServer() {
+    return mongoose.disconnect().then(() => {
+        return new Promise((resolve, reject) => {
+            console.log('Server is down');
+            server.close(err => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve();
+            });
+        });
+    });
+};
+
+// check if server was started directly via "node.js" or if it was started from another file via require
+// resource: https://nodejs.org/docs/latest/api/all.html#modules_accessing_the_main_module
+if (require.main === module) {
+    startServer(DATABASE_URL).catch(err => console.error(err));
+};
+
+// app.listen(PORT, () => console.log(`server is listening on ${PORT}`));
+
+module.exports = { app, startServer, stopServer };

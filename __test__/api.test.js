@@ -10,29 +10,47 @@ const chance = Chance();
 // config chai to use express app
 const { app } = require('../server');
 
+// import start and stop server functions
+const { startServer, stopServer } = require('../server');
 
-// TODO: convert tests to use promise with catch
-// NOTE: API endpoints still need to be built for put, del, post
+// import test DB and port number
+const { PORT, TEST_DATABASE_URL } = require('../config');
 
+// import model
+const { Parent } = require('../models/Parent');
 
-// get test using done and end
+// seed db
+function seedDB() {
+    console.info('seeding db...');
+    const seedData = [];
 
-// test('testing GET', done => {
-//     chai.request(app)
-//         .get('/get-test')
-//         .end((err, res) => {
-//             expect(res).to.have.status(200);
-//             expect(res).to.be.json;
-//             expect(res.body).to.be.an('array');
-//             expect(res.body[0]).to.include.any.keys('_id');
-//             done();
-//         });
-// });
+    seedData.push({
+        email: chance.email(),
+        username: chance.name(),
+        password: "Password321",
+        child: chance.name(),
+        allergen: chance.animal(),
+        reaction: "safe",
+        details: "some info about the allergen"
+    });
 
+    return Parent.insertMany(seedData);
+}
 
+// jest test prep
+beforeAll(() => {
+    return startServer(TEST_DATABASE_URL);
+});
 
-// get test converted to use promise with catch
+afterAll(() => {
+    return stopServer();
+});
+
+// tests
 test('testing GET', () => {
+
+    seedDB();
+
     chai.request(app)
         .get('/get-test')
         .then(res => {
@@ -41,44 +59,51 @@ test('testing GET', () => {
             expect(res.body).to.be.an('array');
             expect(res.body[0]).to.include.any.keys('_id');
         })
-        .catch(err => {
-            throw err;
-        })
-});
-
-test('testing POST', done => {
-    chai.request(app)
-        .post('/post-test')
-        .send({
-            email: chance.email(),
-            username: chance.name(),
-            password: "Password321",
-            child: chance.name(),
-            allergen: chance.animal(),
-            reaction: "safe",
-            details: "some info about the allergen"
-        })
-        .end((err, res) => {
-            expect(res).to.have.status(201);
-            expect(res).to.be.json;
-            done();
+        .catch(error => {
+            throw error;
         });
 });
 
-test('testing PUT', done => {
+test('testing POST', () => {
+
+    let newUser = {
+        email: chance.email(),
+        username: chance.name(),
+        password: "Password321",
+        child: chance.name(),
+        allergen: chance.animal(),
+        reaction: "safe",
+        details: "some info about the allergen"
+    };
+
+    chai.request(app)
+        .post('/post-test')
+        .send(newUser)
+        .then(res => {
+            expect(res).to.have.status(201);
+            expect(res).to.be.json;
+        })
+        .catch(error => {
+            throw error;
+        });
+});
+
+test('testing PUT', () => {
     let email = chance.email();
     let data = { email };
     let id = "5a7261f77b5ae921cc913e61";
     chai.request(app)
         .put('/put-test/' + id)
         .send(data)
-        .end((err, res) => {
+        .then(res => {
             expect(res).to.have.status(200);
-            done();
+        })
+        .catch(error => {
+            throw error;
         });
 });
 
-test('testing DELETE', done => {
+test('testing DELETE', () => {
     chai.request(app)
         .post('/post-test')
         .send({
@@ -86,7 +111,7 @@ test('testing DELETE', done => {
             username: chance.name(),
             password: "testPasswordForDeleteAPI"
         })
-        .end((err, res) => {
+        .then(res => {
             console.log("deleting response from post: ", res.body);
             let id = res.body._id;
             chai.request(app)
@@ -94,6 +119,8 @@ test('testing DELETE', done => {
                 .end((err, res) => {
                     expect(res).to.have.status(204);
                 });
-            done();
         })
+        .catch(error => {
+            throw error;
+        });
 });
