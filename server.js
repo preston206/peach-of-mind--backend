@@ -14,8 +14,8 @@ app.use(bodyParser.json())
 
 
 // routes
-app.get('/', (req, res) => {
-    res.status(200).json({ "get": "test" });
+app.get('/get-test', (req, res) => {
+    res.status(200).json([{ "_id": "787878" }]);
 });
 
 module.exports = { app };
