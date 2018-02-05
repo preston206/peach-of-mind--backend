@@ -3,11 +3,8 @@ node_js: node
 cache:
   directories:
     - node_modules
-script:
-  - npm test
 env:
   - CI=true
-
 deploy:
   provider: heroku
   api_key:
