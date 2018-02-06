@@ -24,12 +24,8 @@ app.get('/get-test', (req, res) => {
     res.status(200).json([{ "_id": "787878" }]);
 });
 
-app.get('/api/*', (req, res) => {
-    res.json({ ok: true });
-});
-
 app.get('/', (req, res) => {
-    res.send("hello.");
+    res.send("hello, test.");
 });
 
 app.post('/post-test', (req, res) => {
