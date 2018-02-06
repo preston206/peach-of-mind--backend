@@ -21,8 +21,15 @@ const { Parent } = require('./models/Parent');
 
 // routes
 app.get('/get-test', (req, res) => {
-    // res.status(200).json([{ "_id": "787878" }]);
-    res.send({ "_id": "787878" });
+    res.status(200).json([{ "_id": "787878" }]);
+});
+
+app.get('/api/*', (req, res) => {
+    res.json({ ok: true });
+});
+
+app.get('/', (req, res) => {
+    res.send("hello.");
 });
 
 app.post('/post-test', (req, res) => {
