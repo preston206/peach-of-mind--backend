@@ -3,21 +3,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
+const cors = require('cors');
+const app = express();
+app.use(cors());
+
 const { PORT, DATABASE_URL } = require('./config');
 
-const app = express();
+// import model
+const { Parent } = require('./models/Parent');
 
 // body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-
-// connecting to mongodb
-// mongoose.connect(DATABASE_URL)
-//     .then(() => console.log(`mongodb connected to ${PORT}`))
-//     .catch(error => console.log(error));
-
-// import model
-const { Parent } = require('./models/Parent');
 
 // routes
 app.get('/get-test', (req, res) => {
@@ -95,10 +92,10 @@ app.delete('/delete-test/:id', (req, res) => {
         }));
 });
 
-//////////
 
-//////////
-
+// server config section
+// functions for starting and stopping
+// and connecting to the db
 let server;
 
 function startServer(db) {
@@ -151,7 +148,5 @@ function stopServer() {
 if (require.main === module) {
     startServer(DATABASE_URL).catch(err => console.error(err));
 };
-
-// app.listen(PORT, () => console.log(`server is listening on ${PORT}`));
 
 module.exports = { app, startServer, stopServer };

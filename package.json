@@ -18,6 +18,7 @@
   "homepage": "https://github.com/preston206/peach-of-mind--backend#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
     "dotenv": "^5.0.0",
     "express": "^4.16.2",
     "mongoose": "^5.0.3"
