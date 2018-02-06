@@ -47,22 +47,22 @@ afterAll(() => {
 });
 
 // tests
-// test('testing GET', () => {
+test('testing GET', () => {
 
-//     seedDB();
+    seedDB();
 
-//     chai.request(app)
-//         .get('/get-test')
-//         .then(res => {
-//             expect(res).to.have.status(200);
-//             expect(res).to.be.json;
-//             expect(res.body).to.be.an('array');
-//             expect(res.body[0]).to.include.any.keys('_id');
-//         })
-//         .catch(error => {
-//             throw error;
-//         });
-// });
+    chai.request(app)
+        .get('/get-test')
+        .then(res => {
+            expect(res).to.have.status(200);
+            expect(res).to.be.json;
+            expect(res.body).to.be.an('array');
+            expect(res.body[0]).to.include.any.keys('_id');
+        })
+        .catch(error => {
+            throw error;
+        });
+});
 
 test('testing POST', () => {
 
