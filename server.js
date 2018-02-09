@@ -2,23 +2,74 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+const morgan = require('morgan');
+
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 const cors = require('cors');
 const app = express();
 app.use(cors());
 
-const { PORT, DATABASE_URL } = require('./config');
+// logging
+app.use(morgan('common'));
 
-// import models
+const { PORT, DATABASE_URL, SESSION_SECRET } = require('./config');
+
+// import model
 const { Parent } = require('./models/Parent');
-const { User } = require('./models/User');
 
 // body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+const store = new MongoDBStore({
+    uri: DATABASE_URL,
+    collection: 'sessions'
+});
+
+// catch store errors
+store.on('error', function (error) {
+    assert.ifError(error);
+    assert.ok(false);
+});
+
+// the session needs to come before initializing passport
+app.use(session({
+    secret: SESSION_SECRET,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+    },
+    store: store,
+    resave: true,
+    saveUninitialized: true
+}));
+
+// passport init
+app.use(passport.initialize());
+app.use(passport.session());
+
+// auth check to see if user has already been authenticated
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        console.log("hello", req.user);
+        return next();
+    }
+    else {
+        console.log("who are you?");
+        // res.redirect('login');
+        return next();
+    };
+};
+
+// if I want to check every req to see if the user is logged in:
+// app.use(isLoggedIn);
+
+
 // routes
-app.get('/api/v1/get-test', (req, res) => {
+app.get('/api/v1/get-test', isLoggedIn, (req, res) => {
     res.status(200).json([{ "_id": "787878" }]);
 });
 
@@ -150,14 +201,38 @@ app.post('/api/v1/users/register', (req, res, next) => {
         });
 });
 
-// login
-app.post('/api/v1/auth/login', (req, res, next) => {
-    res.status(200).json("logged in");
+
+// passport local strategy setup
+passport.use(new LocalStrategy(
+    function (username, password, done) {
+        Parent.findOne({ username: username }, function (err, user) {
+            if (err) { return done(err); }
+            if (!user) {
+                return done(null, false, { message: 'Incorrect username.' });
+            }
+            if (!user.validatePassword(password)) {
+                return done(null, false, { message: 'Incorrect password.' });
+            }
+            return done(null, user);
+        });
+    }
+));
+
+// passport serialize / deserialize
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
 });
 
-// refresh
-app.post('/api/v1/auth/refresh', (req, res, next) => {
-    // refresh your token...
+passport.deserializeUser(function (id, done) {
+    Parent.findById(id, function (err, user) {
+        done(err, user);
+    });
+});
+
+
+// login
+app.post('/api/v1/auth/login', passport.authenticate('local'), (req, res) => {
+    res.status(200).json("logged in");
 });
 
 app.post('/api/v1/post-test', (req, res) => {
@@ -228,7 +303,7 @@ app.delete('/delete-test/:id', (req, res) => {
 });
 
 
-// server config section
+//  -- server config section --
 // functions for starting and stopping
 // and connecting to the db
 let server;
