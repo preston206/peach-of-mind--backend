@@ -39,6 +39,7 @@ const ParentSchema = new mongoose.Schema({
 // the next two instance methods will be available on each document object
 ParentSchema.methods.serialize = function () {
     return {
+        id: this._id || '',
         email: this.email || '',
         username: this.username || '',
         children: this.children || ''

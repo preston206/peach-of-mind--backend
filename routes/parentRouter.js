@@ -7,10 +7,25 @@ const LocalStrategy = require('passport-local').Strategy;
 const app = express();
 
 // import auth check middleware
-const isLoggedIn = require('../middleware/auth');
+const { isLoggedIn } = require('../middleware/auth');
 
 // importing model
 const { Parent } = require('../models/Parent');
+
+// model layout:
+// Parent {
+//     email: ,
+//     username: ,
+//     password: hashed,
+//     children: [{
+//         child: name,
+//         allergies: [{
+//             allergen: name,
+//             reaction: safe or unsafe,
+//             details: 
+//         }]
+//     }]
+// };
 
 // register route
 router.post('/register', (req, res, next) => {
@@ -139,10 +154,10 @@ passport.use(new LocalStrategy(
         Parent.findOne({ username: username }, function (err, user) {
             if (err) { return done(err); }
             if (!user) {
-                return done(null, false, { message: 'Incorrect username.' });
+                return done(null, false, { message: 'Invalid credentials.' });
             }
             if (!user.validatePassword(password)) {
-                return done(null, false, { message: 'Incorrect password.' });
+                return done(null, false, { message: 'Invalid credentials.' });
             }
             return done(null, user);
         });

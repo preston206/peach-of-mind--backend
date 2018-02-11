@@ -9,84 +9,108 @@ const { isLoggedIn } = require('../middleware/auth');
 const { Parent } = require('../models/Parent');
 
 // routes
+
+
+// TODO: update endpoints to use names instead of IDs
+
+
+// get all aergens for a specific child profile
 router.get('/', (req, res) => {
     res.status(200).send("get all allergens");
 });
 
-router.get('/:id', isLoggedIn, (req, res) => {
+// get single allergen - param = allergen ID
+router.get('/:aid', isLoggedIn, (req, res) => {
     res.status(200).send("get one allergen");
 });
 
+// add new allergen object to the array
 router.post('/', (req, res) => {
-    res.status(200).send("add one allergen");
 
-    // const newParent = {
-    //     email: req.body.email,
-    //     username: req.body.username,
-    //     password: req.body.password,
-    //     children: [{
-    //         name: req.body.child,
-    //         allergies: [{
-    //             name: req.body.allergen,
-    //             reaction: req.body.reaction,
-    //             details: req.body.details
-    //         }]
-    //     }]
-    // };
+    const newAllergen = {};
 
-    // return Parent
-    //     .create(newParent)
-    //     .then(profile => {
-    //         console.log("creating: ", profile);
-    //         res.status(201).json(profile)
-    //     })
-    //     .catch(error => console.log(error));
+    newAllergen.allergen = req.body.allergen;
+    newAllergen.reaction = req.body.reaction;
+    newAllergen.details = req.body.details;
+
+    Parent
+        .findById(req.body.pid)
+        .then(parent => {
+            if (!parent) res.status(400).json({ msg: "profile not found" });
+            const findChild = parent.children.find(child => {
+                // console.log("child: ", child);
+                return child.id === req.body.cid;
+            });
+            // console.log("found child: ", findChild);
+            findChild.allergies.push(newAllergen);
+            return parent.save();
+        })
+        .then(result => {
+            if (!result) return res.status(400).json({ msg: "child profile not found" });
+            // console.log("result: ", result);
+            return res.status(201).json({
+                message: "allergen profile created",
+                data: result.serialize()
+            });
+        })
+        .catch(error => res.status(400).send(error));
 });
 
-router.put('/:id', (req, res) => {
-    res.status(200).send("edit one allergen");
+// edit single allergen
+router.put('/:aid', (req, res) => {
 
-    // let updateTheseFields = {
-    //     email: req.body.email,
-    //     username: req.body.username,
-    //     password: req.body.password,
-    //     children: [{
-    //         name: req.body.child,
-    //         allergies: [{
-    //             name: req.body.allergen,
-    //             reaction: req.body.reaction,
-    //             details: req.body.details
-    //         }]
-    //     }]
-    // };
+    Parent
+        .findById(req.body.pid)
+        .then(parent => {
+            if (!parent) return res.status(400).json({ msg: "profile not found" });
 
-    // return Parent
-    //     .findByIdAndUpdate(req.params.id, { $set: updateTheseFields }, { new: true })
-    //     .then(parent => {
-    //         return res.status(200).json({
-    //             message: "data has been updated",
-    //             data: parent
-    //         });
-    //     })
-    //     .catch(error => {
-    //         return res.status(500).json({
-    //             message: "server error"
-    //         });
-    //     });
+            // using the find() array helper:
+            // const findChild = parent.children.find(child => child.id === req.params.id);
+            // const findAllergen = findChild.allergies.find(allergen => allergen.id === req.body.aid);
+
+            // using a special mongoose method for targeting sub-docs:
+            // resource: http://mongoosejs.com/docs/subdocs.html
+            const child = parent.children.id(req.body.cid);
+            const allergen = child.allergies.id(req.params.aid);
+            console.log("allergen: ", allergen);
+            allergen.set({
+                allergen: req.body.allergen,
+                reaction: req.body.reaction,
+                details: req.body.details
+            })
+            console.log("updated allergen: ", allergen);
+            return parent.save();
+        })
+        .then(result => {
+            if (!result) return res.status(400).json({ msg: "allergen not found" });
+            return res.status(201).json({
+                message: "allergen profile updated",
+                data: result.serialize()
+            });
+        })
+        .catch(error => res.send(error));
 });
 
-router.delete('/:id', (req, res) => {
-
-    res.status(200).send("delete one allergen");
-
-    // console.log("deleting id: ", req.params.id);
-    // return Parent
-    //     .findOneAndRemove(req.params.id)
-    //     .exec()
-    //     .then(res.status(204).end())
-    //     .catch(error => res.status(500).json({
-    //         message: "server error"
-    //     }));
+// delete single allergen
+router.delete('/:aid', (req, res) => {
+    Parent
+        .findById(req.body.pid)
+        .then(parent => {
+            if (!parent) return res.status(400).json({ msg: "profile not found" });
+            const child = parent.children.id(req.body.cid);
+            // console.log("child allergies: ", child.allergies);
+            const allergen = child.allergies.id(req.params.aid).remove();
+            // console.log("updated child allergies: ", child.allergies);
+            return parent.save();
+        })
+        .then(result => {
+            if (!result) return res.status(400).json({ msg: "allergen not found" });
+            return res.status(200).json({
+                message: "allergen profile has been deleted",
+                data: result.serialize()
+            });
+        })
+        .catch(error => res.send(error));
 });
 
 module.exports = router;
