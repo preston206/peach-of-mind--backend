@@ -8,24 +8,37 @@ const { isLoggedIn } = require('../middleware/auth');
 // importing model
 const { Parent } = require('../models/Parent');
 
-// routes
 
+// // routes: // //
 
-// TODO: update endpoints to use names instead of IDs
-
-
-// get all aergens for a specific child profile
-router.get('/', (req, res) => {
-    res.status(200).send("get all allergens");
+// get all allergens for a specific child profile
+// param1=parent id; param2=child id
+router.get('/:pid/:cid', (req, res) => {
+    Parent
+        .findById(req.params.pid)
+        .then(parent => {
+            if (!parent) return res.status(404).json({ msg: "profile not found" });
+            const child = parent.children.id(req.params.cid);
+            return res.status(200).send(child.allergies);
+        })
+        .catch(error => res.status(500).send(error));
 });
 
-// get single allergen - param = allergen ID
-router.get('/:aid', isLoggedIn, (req, res) => {
-    res.status(200).send("get one allergen");
+// get single allergen for a specific child
+// param3 = allergen ID
+router.get('/:pid/:cid/:aid', (req, res) => {
+    Parent
+        .findById(req.params.pid)
+        .then(parent => {
+            if (!parent) return res.status(404).json({ msg: "profile not found" });
+            const child = parent.children.id(req.params.cid);
+            return res.status(200).send(child.allergies.id(req.params.aid));
+        })
+        .catch(error => res.status(500).send(error));
 });
 
-// add new allergen object to the array
-router.post('/', (req, res) => {
+// add new allergen for a specific child
+router.post('/:pid/:cid', (req, res) => {
 
     const newAllergen = {};
 
@@ -34,83 +47,82 @@ router.post('/', (req, res) => {
     newAllergen.details = req.body.details;
 
     Parent
-        .findById(req.body.pid)
+        .findById(req.params.pid)
         .then(parent => {
-            if (!parent) res.status(400).json({ msg: "profile not found" });
-            const findChild = parent.children.find(child => {
-                // console.log("child: ", child);
-                return child.id === req.body.cid;
-            });
-            // console.log("found child: ", findChild);
-            findChild.allergies.push(newAllergen);
+            if (!parent) return res.status(404).json({ msg: "profile not found" });
+
+            // using the find() array helper to get the requested info:
+            // const findChild = parent.children.find(child => {
+            //     return child.id === req.body.cid;
+            // });
+            // findChild.allergies.push(newAllergen);
+
+            // converting strategy to use Mongoose ID method to find a specific sub-doc:
+            const child = parent.children.id(req.params.cid);
+            child.allergies.push(newAllergen);
             return parent.save();
         })
         .then(result => {
-            if (!result) return res.status(400).json({ msg: "child profile not found" });
-            // console.log("result: ", result);
+            if (!result) return res.status(404).json({ msg: "child profile not found" });
             return res.status(201).json({
                 message: "allergen profile created",
                 data: result.serialize()
             });
         })
-        .catch(error => res.status(400).send(error));
+        .catch(error => res.status(500).send(error));
 });
 
 // edit single allergen
-router.put('/:aid', (req, res) => {
+router.put('/:pid/:cid/:aid', (req, res) => {
 
     Parent
-        .findById(req.body.pid)
+        .findById(req.params.pid)
         .then(parent => {
-            if (!parent) return res.status(400).json({ msg: "profile not found" });
+            if (!parent) return res.status(404).json({ msg: "profile not found" });
 
             // using the find() array helper:
             // const findChild = parent.children.find(child => child.id === req.params.id);
             // const findAllergen = findChild.allergies.find(allergen => allergen.id === req.body.aid);
 
-            // using a special mongoose method for targeting sub-docs:
+            // using a special mongoose method find a specific sub-doc:
             // resource: http://mongoosejs.com/docs/subdocs.html
-            const child = parent.children.id(req.body.cid);
+            const child = parent.children.id(req.params.cid);
             const allergen = child.allergies.id(req.params.aid);
-            console.log("allergen: ", allergen);
             allergen.set({
                 allergen: req.body.allergen,
                 reaction: req.body.reaction,
                 details: req.body.details
             })
-            console.log("updated allergen: ", allergen);
             return parent.save();
         })
         .then(result => {
-            if (!result) return res.status(400).json({ msg: "allergen not found" });
-            return res.status(201).json({
+            if (!result) return res.status(404).json({ msg: "allergen not found" });
+            return res.status(200).json({
                 message: "allergen profile updated",
                 data: result.serialize()
             });
         })
-        .catch(error => res.send(error));
+        .catch(error => res.status(500).send(error));
 });
 
 // delete single allergen
-router.delete('/:aid', (req, res) => {
+router.delete('/:pid/:cid/:aid', (req, res) => {
     Parent
-        .findById(req.body.pid)
+        .findById(req.params.pid)
         .then(parent => {
-            if (!parent) return res.status(400).json({ msg: "profile not found" });
-            const child = parent.children.id(req.body.cid);
-            // console.log("child allergies: ", child.allergies);
+            if (!parent) return res.status(404).json({ msg: "profile not found" });
+            const child = parent.children.id(req.params.cid);
             const allergen = child.allergies.id(req.params.aid).remove();
-            // console.log("updated child allergies: ", child.allergies);
             return parent.save();
         })
         .then(result => {
-            if (!result) return res.status(400).json({ msg: "allergen not found" });
+            if (!result) return res.status(404).json({ msg: "allergen not found" });
             return res.status(200).json({
                 message: "allergen profile has been deleted",
                 data: result.serialize()
             });
         })
-        .catch(error => res.send(error));
+        .catch(error => res.status(500).send(error));
 });
 
 module.exports = router;

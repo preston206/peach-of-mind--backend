@@ -144,7 +144,7 @@ router.post('/register', (req, res, next) => {
             if (error.reason === 'ValidationError') {
                 return res.status(error.code).json(error);
             }
-            res.status(500).json({ code: 500, message: error.stack });
+            return res.status(500).json({ code: 500, message: error });
         });
 });
 
@@ -177,7 +177,7 @@ passport.deserializeUser(function (id, done) {
 
 // login route
 router.post('/login', passport.authenticate('local'), (req, res) => {
-    res.status(200).json("logged in");
+    return res.status(200).json("logged in");
 });
 
 // logout
@@ -187,7 +187,7 @@ router.post('/logout', (req, res) => {
     req.logout();
     console.log("logged out? ", req.user);
 
-    res.status(200).json("logged out");
+    return res.status(200).json("logged out");
 });
 
 module.exports = router;
