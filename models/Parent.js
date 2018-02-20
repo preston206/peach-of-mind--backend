@@ -48,6 +48,7 @@ ParentSchema.methods.serialize = function () {
 
 ParentSchema.methods.validatePassword = function (password) {
     console.log("pass-", password, this.password);
+    const hash = bcrypt.hash(password, 10);
     return bcrypt.compare(password, hash, this.password);
 };
 
