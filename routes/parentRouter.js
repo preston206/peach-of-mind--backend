@@ -151,7 +151,6 @@ router.post('/register', (req, res, next) => {
 // passport local strategy setup
 passport.use(new LocalStrategy(
     function (username, password, done) {
-        console.log("creds-", username, password);
         Parent.findOne({ username: username }, function (err, user) {
             if (err) { return done(err); }
             if (!user) {
@@ -178,7 +177,12 @@ passport.deserializeUser(function (id, done) {
 
 // login route
 router.post('/login', passport.authenticate('local'), (req, res) => {
-    return res.status(200).json("logged in");
+    Parent.findOne({ username: req.body.username }, (error, user) => {
+        if (error) return res.status(404).json({ msg: "user not found" });
+        return user;
+    })
+        .then(user => res.status(200).json({ id: user.id, message: "logged in" }))
+        .catch(error => res.status(500).json({ msg: "server error" }));
 });
 
 // logout
