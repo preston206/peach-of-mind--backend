@@ -181,7 +181,7 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
         if (error) return res.status(404).json({ msg: "user not found" });
         return user;
     })
-        .then(user => res.status(200).json({ id: user.id, message: "logged in" }))
+        .then(user => res.status(200).json({ id: user.id, session: req.session, message: "logged in" }))
         .catch(error => res.status(500).json({ msg: "server error" }));
 });
 
