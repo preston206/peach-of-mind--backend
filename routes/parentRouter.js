@@ -151,6 +151,7 @@ router.post('/register', (req, res, next) => {
 // passport local strategy setup
 passport.use(new LocalStrategy(
     function (username, password, done) {
+        console.log("creds-", username, password);
         Parent.findOne({ username: username }, function (err, user) {
             if (err) { return done(err); }
             if (!user) {
