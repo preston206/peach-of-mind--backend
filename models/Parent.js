@@ -47,15 +47,13 @@ ParentSchema.methods.serialize = function () {
 };
 
 ParentSchema.methods.validatePassword = function (password) {
-    console.log("pass-", password, this.password);
-    const hash = bcrypt.hash(password, 10);
-    return bcrypt.compare(password, hash, this.password);
+    return bcrypt.compareSync(password, this.password);
 };
 
 // this static method will be available on the Model
 // E.G. Parent.hashPassword(password)
 ParentSchema.statics.hashPassword = function (password) {
-    return bcrypt.hash(password, 10);
+    return bcrypt.hashSync(password, 10);
 };
 
 const Parent = mongoose.model('Parent', ParentSchema);
