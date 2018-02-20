@@ -48,7 +48,7 @@ ParentSchema.methods.serialize = function () {
 
 ParentSchema.methods.validatePassword = function (password) {
     console.log("pass-", password, this.password);
-    return bcrypt.compare(password, this.password);
+    return bcrypt.compare(password, hash, this.password);
 };
 
 // this static method will be available on the Model
