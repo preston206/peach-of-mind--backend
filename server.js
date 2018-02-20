@@ -50,7 +50,7 @@ app.use(session({
     },
     store: store,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false
 }));
 
 // init passport
