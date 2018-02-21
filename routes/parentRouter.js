@@ -78,7 +78,7 @@ router.post('/register', (req, res, next) => {
     // check username and password length
     const credentialLength = {
         username: {
-            min: 1
+            min: 4
         },
         password: {
             min: 8,
