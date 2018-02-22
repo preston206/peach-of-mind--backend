@@ -20,8 +20,16 @@ app.use(bodyParser.json());
 // auth and CORS
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const cors = require('cors');
-app.use(cors());
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'Origin,Accept,Content-Type,Authorization,Content-Length,X-Requested-With');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+    if (req.method === 'OPTIONS') {
+        return res.send(204);
+    }
+    next();
+});
 
 // logging
 app.use(morgan('common'));

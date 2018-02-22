@@ -137,7 +137,6 @@ router.post('/register', (req, res, next) => {
 passport.use(new LocalStrategy({ session: true },
     function (username, password, done) {
         Parent.findOne({ username: username }, function (err, user) {
-            // console.log("user from local--", user);
             if (err) { return done(err); }
             if (!user) {
                 return done(null, false, { message: 'Invalid credentials.' });
@@ -145,7 +144,6 @@ passport.use(new LocalStrategy({ session: true },
             if (!user.validatePassword(password)) {
                 return done(null, false, { message: 'Invalid credentials.' });
             }
-            // console.log("user from local--", user);
             return done(null, user);
         });
     }
@@ -166,6 +164,7 @@ passport.deserializeUser(function (id, done) {
 router.post('/login', passport.authenticate('local', { session: true }), (req, res) => {
     const sid = req.sessionID;
     const pid = req.user._id;
+    console.log("login req user--", req.user);
     res.status(200).json({ sid, pid });
 });
 
