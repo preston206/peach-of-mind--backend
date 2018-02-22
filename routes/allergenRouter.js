@@ -13,7 +13,7 @@ const { Parent } = require('../models/Parent');
 
 // get all allergens for a specific child profile
 // param1=parent id; param2=child id
-router.get('/:pid/:cid', (req, res) => {
+router.get('/:pid/:cid', isLoggedIn, (req, res) => {
     Parent
         .findById(req.params.pid)
         .then(parent => {
@@ -26,7 +26,7 @@ router.get('/:pid/:cid', (req, res) => {
 
 // get single allergen for a specific child
 // param3 = allergen ID
-router.get('/:pid/:cid/:aid', (req, res) => {
+router.get('/:pid/:cid/:aid', isLoggedIn, (req, res) => {
     Parent
         .findById(req.params.pid)
         .then(parent => {
@@ -38,7 +38,7 @@ router.get('/:pid/:cid/:aid', (req, res) => {
 });
 
 // add new allergen for a specific child
-router.post('/:pid/:cid', (req, res) => {
+router.post('/:pid/:cid', isLoggedIn, (req, res) => {
 
     const newAllergen = {};
 
@@ -73,7 +73,7 @@ router.post('/:pid/:cid', (req, res) => {
 });
 
 // edit single allergen
-router.put('/:pid/:cid/:aid', (req, res) => {
+router.put('/:pid/:cid/:aid', isLoggedIn, (req, res) => {
 
     Parent
         .findById(req.params.pid)
@@ -106,7 +106,7 @@ router.put('/:pid/:cid/:aid', (req, res) => {
 });
 
 // delete single allergen
-router.delete('/:pid/:cid/:aid', (req, res) => {
+router.delete('/:pid/:cid/:aid', isLoggedIn, (req, res) => {
     Parent
         .findById(req.params.pid)
         .then(parent => {

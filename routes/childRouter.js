@@ -25,7 +25,7 @@ router.get('/:pid', isLoggedIn, (req, res) => {
 
 // get single child profile
 // param2 = child ID
-router.get('/:pid/:cid', (req, res) => {
+router.get('/:pid/:cid', isLoggedIn, (req, res) => {
     Parent
         .findById(req.params.pid)
         .then(parent => {
@@ -37,7 +37,7 @@ router.get('/:pid/:cid', (req, res) => {
 });
 
 // add new child profile
-router.post('/:pid', (req, res) => {
+router.post('/:pid', isLoggedIn, (req, res) => {
 
     const newChild = {};
 
@@ -57,7 +57,7 @@ router.post('/:pid', (req, res) => {
 });
 
 // edit single child profile
-router.put('/:pid/:cid', (req, res) => {
+router.put('/:pid/:cid', isLoggedIn, (req, res) => {
     Parent
         .findById(req.params.pid)
         .then(parent => {
@@ -77,7 +77,7 @@ router.put('/:pid/:cid', (req, res) => {
 });
 
 // delete single child profile
-router.delete('/:pid/:cid', (req, res) => {
+router.delete('/:pid/:cid', isLoggedIn, (req, res) => {
     Parent
         .findById(req.params.pid)
         .then(parent => {

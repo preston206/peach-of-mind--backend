@@ -6,9 +6,6 @@ const LocalStrategy = require('passport-local').Strategy;
 
 const app = express();
 
-// import auth check middleware
-const { isLoggedIn } = require('../middleware/auth');
-
 // importing model
 const { Parent } = require('../models/Parent');
 
