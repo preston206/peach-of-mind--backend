@@ -67,6 +67,7 @@ app.use('/api/v1/parents', parentRouter);
 app.use('/api/v1/children', childRouter);
 app.use('/api/v1/allergens', allergenRouter);
 
+
 //  ----- server config section -----
 // functions for starting and stopping the server
 // and connecting to the db

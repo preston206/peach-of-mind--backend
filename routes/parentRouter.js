@@ -12,21 +12,6 @@ const { isLoggedIn } = require('../middleware/auth');
 // importing model
 const { Parent } = require('../models/Parent');
 
-// model layout:
-// Parent {
-//     email: ,
-//     username: ,
-//     password: hashed,
-//     children: [{
-//         child: name,
-//         allergies: [{
-//             allergen: name,
-//             reaction: safe or unsafe,
-//             details: 
-//         }]
-//     }]
-// };
-
 // register route
 router.post('/register', (req, res, next) => {
 
@@ -140,7 +125,7 @@ router.post('/register', (req, res, next) => {
         })
         .catch(error => {
             // Forward validation errors on to the client, otherwise give a 500
-            // error because something unexpected has happened
+            // the 500 error represents something happening that we didnt plan for in the code
             if (error.reason === 'ValidationError') {
                 return res.status(error.code).json(error);
             }
@@ -149,9 +134,10 @@ router.post('/register', (req, res, next) => {
 });
 
 // passport local strategy setup
-passport.use(new LocalStrategy(
+passport.use(new LocalStrategy({ session: true },
     function (username, password, done) {
         Parent.findOne({ username: username }, function (err, user) {
+            // console.log("user from local--", user);
             if (err) { return done(err); }
             if (!user) {
                 return done(null, false, { message: 'Invalid credentials.' });
@@ -159,6 +145,7 @@ passport.use(new LocalStrategy(
             if (!user.validatePassword(password)) {
                 return done(null, false, { message: 'Invalid credentials.' });
             }
+            // console.log("user from local--", user);
             return done(null, user);
         });
     }
@@ -176,13 +163,10 @@ passport.deserializeUser(function (id, done) {
 });
 
 // login route
-router.post('/login', passport.authenticate('local'), (req, res) => {
-    Parent.findOne({ username: req.body.username }, (error, user) => {
-        if (error) return res.status(404).json({ msg: "user not found" });
-        return user;
-    })
-        .then(user => res.status(200).json({ id: user.id, session: req.session, message: "logged in" }))
-        .catch(error => res.status(500).json({ msg: "server error" }));
+router.post('/login', passport.authenticate('local', { session: true }), (req, res) => {
+    const sid = req.sessionID;
+    const pid = req.user._id;
+    res.status(200).json({ sid, pid });
 });
 
 // logout
