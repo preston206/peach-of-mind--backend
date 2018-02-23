@@ -51,6 +51,7 @@ store.on('error', function (error) {
 
 // init express session
 // the session needs to come before initializing passport
+app.set('trust proxy', 1);
 app.use(session({
     secret: SESSION_SECRET,
     cookie: {
