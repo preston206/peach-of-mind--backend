@@ -11,7 +11,7 @@ const app = express();
 // importing config variables
 const { PORT, DATABASE_URL, TEST_DATABASE_URL, SESSION_SECRET } = require('./config');
 
-// DATABASE CURRENTLY IN USE: TEST_DATABASE_URL
+// DATABASE CURRENTLY IN USE: DATABASE_URL (PROD)
 
 // body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -39,7 +39,7 @@ const { Parent } = require('./models/Parent');
 
 // init express session store
 const store = new MongoDBStore({
-    uri: TEST_DATABASE_URL,
+    uri: DATABASE_URL,
     collection: 'sessions'
 });
 
@@ -133,7 +133,7 @@ function stopServer() {
 // check if server was started directly via "node.js" or if it was started from another file via require
 // resource: https://nodejs.org/docs/latest/api/all.html#modules_accessing_the_main_module
 if (require.main === module) {
-    startServer(TEST_DATABASE_URL).catch(err => console.error(err));
+    startServer(DATABASE_URL).catch(err => console.error(err));
 };
 
 module.exports = { app, startServer, stopServer };
