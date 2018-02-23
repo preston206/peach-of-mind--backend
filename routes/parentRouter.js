@@ -166,12 +166,8 @@ router.post('/login', passport.authenticate('local', { session: true }), (req, r
 });
 
 // logout
-router.post('/logout', (req, res) => {
-
-    console.log("still logged in: ", req.user);
+router.get('/logout', (req, res) => {
     req.logout();
-    console.log("logged out? ", req.user);
-
     return res.status(200).json("logged out");
 });
 
