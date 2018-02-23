@@ -54,6 +54,7 @@ store.on('error', function (error) {
 app.use(session({
     secret: SESSION_SECRET,
     cookie: {
+        secure: true,
         maxAge: 1000 * 60 * 60 * 24 // 1 day
     },
     store: store,
