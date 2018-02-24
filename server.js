@@ -24,7 +24,7 @@ app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', 'https://peachofmind.netlify.com');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Headers', 'Origin,Accept,Content-Type,Authorization,Content-Length,X-Requested-With');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     if (req.method === 'OPTIONS') {
         return res.send(204);
     }
