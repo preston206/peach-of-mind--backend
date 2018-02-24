@@ -6,6 +6,7 @@ const express = require('express');
 function isLoggedIn(req, res, next) {
     console.log("auth check--", req.user);
     console.log("auth check session--", req.session);
+    console.log("auth check sessionID--", req.sessionID);
     if (req.isAuthenticated()) {
         console.log("is authenticated");
         return next();
