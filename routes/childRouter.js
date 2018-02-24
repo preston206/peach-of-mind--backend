@@ -13,7 +13,7 @@ const { Parent } = require('../models/Parent');
 
 // get all child profiles for a specific user\parent
 // param = parent ID
-router.get('/:pid', (req, res) => {
+router.get('/:pid', isLoggedIn, (req, res) => {
     Parent
         .findById(req.params.pid)
         .then(parent => {
