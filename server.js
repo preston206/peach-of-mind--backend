@@ -23,7 +23,7 @@ const LocalStrategy = require('passport-local').Strategy;
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', 'https://peachofmind.netlify.com');
     res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Headers', 'Origin,Accept,Content-Type,Authorization,Content-Length,X-Requested-With');
+    res.header('Access-Control-Allow-Headers', 'Origin,Accept,Content-Type,Authorization,Content-Length,X-Requested-With,Range');
     res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     if (req.method === 'OPTIONS') {
         return res.send(204);
@@ -53,11 +53,11 @@ store.on('error', function (error) {
 
 // init express session
 // the session needs to come before initializing passport
-// app.set('trust proxy', 1);
+app.set('trust proxy', 1);
 app.use(session({
     secret: SESSION_SECRET,
     cookie: {
-        secure: false,
+        secure: true,
         maxAge: 1000 * 60 * 60 * 24 // 1 day
     },
     store: store,
