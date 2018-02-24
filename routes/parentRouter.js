@@ -83,8 +83,8 @@ router.post('/register', (req, res, next) => {
             code: 422,
             reason: 'ValidationError',
             message: tooShort ?
-                `Must be at least ${credentialLength[tooShort].min} characters long` :
-                `Must be at most ${credentialLength[tooLong].max} characters long`,
+                `must be at least ${credentialLength[tooShort].min} characters long` :
+                `must be at most ${credentialLength[tooLong].max} characters long`,
             location: tooShort || tooLong
         });
     }

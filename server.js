@@ -30,6 +30,8 @@ app.use(function (req, res, next) {
     }
     next();
 });
+// testing setting:
+// res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
 
 // logging
 app.use(morgan('common'));
@@ -62,6 +64,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+// NOTE: when testing locally change secure to false and mute trust proxy setting
 
 // init passport
 app.use(passport.initialize());
