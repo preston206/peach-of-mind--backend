@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+// sub doc schema for allergies
+// allergen = the allergen name
 const AllergenSchema = new mongoose.Schema({
     allergen: String,
     reaction: String,
@@ -13,11 +15,14 @@ const AllergenSchema = new mongoose.Schema({
         }
     });
 
+// sub doc schema for child profiles
+// child = the child name
 const ChildSchema = new mongoose.Schema({
     child: String,
     allergies: [AllergenSchema]
 });
 
+// root schema
 const ParentSchema = new mongoose.Schema({
     email: {
         type: String,

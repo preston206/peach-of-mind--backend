@@ -11,7 +11,9 @@ const app = express();
 // importing config variables
 const { PORT, DATABASE_URL, TEST_DATABASE_URL, SESSION_SECRET } = require('./config');
 
+// // // // //
 // DATABASE CURRENTLY IN USE: DATABASE_URL (PROD)
+// // // // //
 
 // body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));

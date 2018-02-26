@@ -50,7 +50,7 @@ router.post('/register', (req, res, next) => {
         return res.status(422).json({
             code: 422,
             reason: 'ValidationError',
-            message: 'Username or password cannot start nor end with a space',
+            message: 'Username or password cannot start nor end with a space.',
             location: notTrimmed
         });
     }
@@ -62,25 +62,19 @@ router.post('/register', (req, res, next) => {
         },
         password: {
             min: 8,
-            // bcrypt truncates after 72 characters
-            max: 72
+            max: 72 // bcrypt truncates after 72 characters
         }
     };
 
     const tooShort = Object.keys(credentialLength).find(field =>
-        'min' in credentialLength[field] &&
-        req.body[field].trim().length < credentialLength[field].min
-    );
-    const tooLong = Object.keys(credentialLength).find(field =>
-        'max' in credentialLength[field] &&
-        req.body[field].trim().length > credentialLength[field].max
+        'min' in credentialLength[field] && req.body[field].trim().length < credentialLength[field].min
     );
 
-    // console.log("tooShort, tooLong", tooShort, tooLong);
+    const tooLong = Object.keys(credentialLength).find(field =>
+        'max' in credentialLength[field] && req.body[field].trim().length > credentialLength[field].max
+    );
 
     const fieldName = tooShort || tooLong;
-
-    // console.log("fieldName", fieldName);
 
     if (tooShort || tooLong) {
         return res.status(422).json({
@@ -110,7 +104,7 @@ router.post('/register', (req, res, next) => {
                     location: 'username'
                 });
             };
-            // if username does not exist, hash password
+            // if username does not exist (I.E. the username is not already taken), hash password
             return Parent.hashPassword(password);
         })
         .then(hash => {
@@ -150,7 +144,8 @@ passport.use(new LocalStrategy({ session: true },
     }
 ));
 
-// passport serialize / deserialize
+// passport serialize / deserialize- used for establishing a session
+// after deserializing, the req body will have a user object attached which contains the user ID and other info
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
@@ -166,11 +161,14 @@ router.post('/login', passport.authenticate('local', { session: true }), (req, r
     const sid = req.sessionID;
     const pid = req.user._id;
     console.log("the following user just logged in: ", pid);
+
+    // if auth successfull, then return 200 and session ID and parent ID (AKA the user ID)
     res.status(200).json({ sid, pid });
 });
 
 // logout
 router.get('/logout', (req, res) => {
+    // this is a method provided by Passport, which removes the user object from the req body
     req.logout();
     return res.status(200).json("logged out");
 });

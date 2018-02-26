@@ -1,7 +1,7 @@
 const express = require('express');
 
 // auth check to see if user has already been authenticated
-// if unauthenticated or missing sessions info then send back 302
+// if unauthenticated or missing session info then send back 302
 // client side will manage redirect
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {

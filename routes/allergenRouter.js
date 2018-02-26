@@ -42,6 +42,7 @@ router.post('/:pid/:cid', isLoggedIn, (req, res) => {
 
     const newAllergen = {};
 
+    // building the newAllergen object
     newAllergen.allergen = req.body.allergen;
     newAllergen.reaction = req.body.reaction;
     newAllergen.details = req.body.details;
@@ -51,14 +52,11 @@ router.post('/:pid/:cid', isLoggedIn, (req, res) => {
         .then(parent => {
             if (!parent) return res.status(404).json({ msg: "profile not found" });
 
-            // using the find() array helper to get the requested info:
-            // const findChild = parent.children.find(child => {
-            //     return child.id === req.body.cid;
-            // });
-            // findChild.allergies.push(newAllergen);
-
-            // converting strategy to use Mongoose ID method to find a specific sub-doc:
+            // use special Mongoose ID method to find a specific sub-doc
+            // resource: http://mongoosejs.com/docs/subdocs.html
             const child = parent.children.id(req.params.cid);
+
+            // then push the new allergen into the array of allergies
             child.allergies.push(newAllergen);
             return parent.save();
         })
@@ -80,19 +78,15 @@ router.put('/:pid/:cid/:aid', isLoggedIn, (req, res) => {
         .then(parent => {
             if (!parent) return res.status(404).json({ msg: "profile not found" });
 
-            // using the find() array helper:
-            // const findChild = parent.children.find(child => child.id === req.params.id);
-            // const findAllergen = findChild.allergies.find(allergen => allergen.id === req.body.aid);
-
-            // using a special mongoose method find a specific sub-doc:
-            // resource: http://mongoosejs.com/docs/subdocs.html
             const child = parent.children.id(req.params.cid);
             const allergen = child.allergies.id(req.params.aid);
+
+            // update an existing allergen with new values
             allergen.set({
                 allergen: req.body.allergen,
                 reaction: req.body.reaction,
                 details: req.body.details
-            })
+            });
             return parent.save();
         })
         .then(result => {
@@ -112,6 +106,8 @@ router.delete('/:pid/:cid/:aid', isLoggedIn, (req, res) => {
         .then(parent => {
             if (!parent) return res.status(404).json({ msg: "profile not found" });
             const child = parent.children.id(req.params.cid);
+
+            // deleting an allergen and then saving the document
             const allergen = child.allergies.id(req.params.aid).remove();
             return parent.save();
         })
