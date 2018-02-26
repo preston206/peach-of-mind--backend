@@ -30,8 +30,11 @@ app.use(function (req, res, next) {
     }
     next();
 });
-// testing setting:
+// // // // // // // // // //
+// NOTE: when testing locally, toggle Origin setting
 // res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+// res.header('Access-Control-Allow-Origin', 'https://peachofmind.netlify.com');
+// // // // // // // // // //
 
 // logging
 app.use(morgan('common'));
@@ -64,14 +67,16 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
-// NOTE: when testing locally change secure to false and mute trust proxy setting
+// // // // // // // // // //
+// NOTE: when testing locally, change secure cookie to false and mute trust proxy setting
+// // // // // // // // // //
 
 // init passport
 app.use(passport.initialize());
 app.use(passport.session());
 
 // routing
-// IMPORTANT: the routing needs to come after everything above...
+// IMPORTANT: the routes need to come after everything above...
 // such as, initializing passport, body parser, etc
 const parentRouter = require('./routes/parentRouter');
 const childRouter = require('./routes/childRouter');

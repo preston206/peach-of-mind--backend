@@ -12,8 +12,6 @@ const { Parent } = require('../models/Parent');
 // register route
 router.post('/register', (req, res, next) => {
 
-    console.log("req.body", req.body);
-
     // check for missing fields
     const requiredField = ['email', 'username', 'password'];
     const missingField = requiredField.find(field => !(field in req.body));
@@ -52,7 +50,7 @@ router.post('/register', (req, res, next) => {
         return res.status(422).json({
             code: 422,
             reason: 'ValidationError',
-            message: 'Cannot start nor end with space',
+            message: 'Username or password cannot start nor end with a space',
             location: notTrimmed
         });
     }
@@ -78,13 +76,19 @@ router.post('/register', (req, res, next) => {
         req.body[field].trim().length > credentialLength[field].max
     );
 
+    // console.log("tooShort, tooLong", tooShort, tooLong);
+
+    const fieldName = tooShort || tooLong;
+
+    // console.log("fieldName", fieldName);
+
     if (tooShort || tooLong) {
         return res.status(422).json({
             code: 422,
             reason: 'ValidationError',
             message: tooShort ?
-                `must be at least ${credentialLength[tooShort].min} characters long` :
-                `must be at most ${credentialLength[tooLong].max} characters long`,
+                `${fieldName} must be at least ${credentialLength[tooShort].min} characters long` :
+                `${fieldName} must be at most ${credentialLength[tooLong].max} characters long`,
             location: tooShort || tooLong
         });
     }
@@ -161,7 +165,7 @@ passport.deserializeUser(function (id, done) {
 router.post('/login', passport.authenticate('local', { session: true }), (req, res) => {
     const sid = req.sessionID;
     const pid = req.user._id;
-    console.log("login req user--", req.user);
+    console.log("the following user just logged in: ", pid);
     res.status(200).json({ sid, pid });
 });
 
