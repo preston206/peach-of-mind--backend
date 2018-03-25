@@ -16,7 +16,7 @@
 ![Screenshot of Peach of Mind Add Allergen Page](http://bprdev.io/img/pom/ss/addAllergen-width1200.png "Peach of Mind Add Allergen Page")
 
 ### Summary
-I created an app for parents to track their child's allergies. The app could be used by anybody actually, for example, maybe a teacher has multiple students with food allergies.
+I created an app for parents to track their child's food allergies. The app could be used by anybody actually, for example, maybe a teacher has multiple students with food allergies.
 
 ### Technologies Used
 - HTML
