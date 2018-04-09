@@ -147,10 +147,12 @@ passport.use(new LocalStrategy({ session: true },
 // passport serialize / deserialize- used for establishing a session
 // after deserializing, the req body will have a user object attached which contains the user ID and other info
 passport.serializeUser(function (user, done) {
+    console.log("serializing...", user);
     done(null, user.id);
 });
 
 passport.deserializeUser(function (id, done) {
+    console.log("de-serializing...", id);
     Parent.findById(id, function (err, user) {
         done(err, user);
     });
