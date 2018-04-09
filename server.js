@@ -33,7 +33,7 @@ app.use(function (req, res, next) {
     next();
 });
 // // // // // // // // // //
-// NOTE: when testing locally, toggle Origin setting to localhost
+// NOTE: when testing locally, toggle Origin setting to localhost- and make client side "base URL" changes too (within actions)
 // res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
 // res.header('Access-Control-Allow-Origin', 'https://peachofmind.netlify.com');
 // // // // // // // // // //
