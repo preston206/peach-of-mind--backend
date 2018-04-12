@@ -13,7 +13,7 @@ const { PORT, PROD_DATABASE_MLAB_URL, TEST_DATABASE_LOCALHOST_URL, TEST_DATABASE
 
 // // //
 // TESTING LOCALLY:
-// 1) update startServer to TEST_DATABASE_LOCALHOST_URL
+// 1) toggle startServer() to TEST_DATABASE_LOCALHOST_URL
 // 2) update MongoDBStore URI to TEST_DATABASE_LOCALHOST_URL
 // 3) toggle header Allow Origin setting to localhost
 // res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
@@ -34,12 +34,12 @@ app.use(bodyParser.json());
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', 'https://peachofmind.netlify.com');
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Headers', 'Origin,Accept,Content-Type,Authorization,Content-Length,X-Requested-With');
     res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE');
     if (req.method === 'OPTIONS') {
-        return res.send(204);
+        return res.sendStatus(204);
     }
     next();
 });
@@ -148,6 +148,7 @@ function stopServer() {
 // resource: https://nodejs.org/docs/latest/api/all.html#modules_accessing_the_main_module
 if (require.main === module) {
     startServer(PROD_DATABASE_MLAB_URL).catch(err => console.error(err));
+    // startServer(TEST_DATABASE_LOCALHOST_URL).catch(err => console.error(err));
 };
 
 module.exports = { app, startServer, stopServer };
