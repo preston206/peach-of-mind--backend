@@ -14,7 +14,7 @@ const { app } = require('../server');
 const { startServer, stopServer } = require('../server');
 
 // import test DB and port number
-const { PORT, TEST_DATABASE_URL } = require('../config');
+const { PORT, TEST_DATABASE_MLAB_URL } = require('../config');
 
 // import model
 const { Parent } = require('../models/Parent');
@@ -39,7 +39,7 @@ function seedDB() {
 
 // jest test prep
 beforeAll(() => {
-    return startServer(TEST_DATABASE_URL);
+    return startServer(TEST_DATABASE_MLAB_URL);
 });
 
 afterAll(() => {
