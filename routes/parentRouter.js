@@ -129,7 +129,7 @@ router.post('/register', (req, res, next) => {
 });
 
 // passport local strategy setup
-passport.use(new LocalStrategy({ session: true },
+passport.use(new LocalStrategy(
     function (username, password, done) {
         Parent.findOne({ username: username }, function (err, user) {
             if (err) { return done(err); }
@@ -147,9 +147,9 @@ passport.use(new LocalStrategy({ session: true },
 // passport serialize / deserialize- used for establishing a session
 // after deserializing, the req body will have a user object attached which contains the user ID and other info
 passport.serializeUser(function (user, done) {
-    console.info("serializing...", user);
-    // done(null, user.id);
-    done(null, user);
+    console.info("serializing...", user.id);
+    done(null, user.id);
+    // done(null, user);
 });
 
 passport.deserializeUser(function (id, done) {
@@ -173,6 +173,7 @@ router.post('/login', passport.authenticate('local', { session: true }), (req, r
 router.get('/logout', (req, res) => {
     // this is a method provided by Passport, which removes the user object from the req body
     req.logout();
+    req.session.destroy();
     return res.status(200).json("logged out");
 });
 

@@ -9,10 +9,21 @@ const morgan = require('morgan');
 const app = express();
 
 // importing config variables
-const { PORT, DATABASE_URL, TEST_DATABASE_URL, SESSION_SECRET } = require('./config');
+const { PORT, PROD_DATABASE_MLAB_URL, TEST_DATABASE_LOCALHOST_URL, TEST_DATABASE_MLAB_URL, SESSION_SECRET } = require('./config');
+
+// // //
+// TESTING LOCALLY:
+// 1) update startServer to TEST_DATABASE_LOCALHOST_URL
+// 2) update MongoDBStore URI to TEST_DATABASE_LOCALHOST_URL
+// 3) toggle header Allow Origin setting to localhost
+// res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+// res.header('Access-Control-Allow-Origin', 'https://peachofmind.netlify.com');
+// 4) toggle "cookie: secure:" to false and mute "app.set('trust proxy', 1)"
+// 5) toggle client side "base URL" to localhost (within actions)
+// // //
 
 // // // // //
-// DATABASE CURRENTLY IN USE: DATABASE_URL (PROD)
+// DATABASE CURRENTLY IN USE: PROD_DATABASE_MLAB_URL
 // // // // //
 
 // body parser middleware
@@ -32,11 +43,6 @@ app.use(function (req, res, next) {
     }
     next();
 });
-// // // // // // // // // //
-// NOTE: when testing locally, toggle Origin setting to localhost- and make client side "base URL" changes too (within actions)
-// res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-// res.header('Access-Control-Allow-Origin', 'https://peachofmind.netlify.com');
-// // // // // // // // // //
 
 // logging
 app.use(morgan('common'));
@@ -46,7 +52,7 @@ const { Parent } = require('./models/Parent');
 
 // init express session store
 const store = new MongoDBStore({
-    uri: DATABASE_URL,
+    uri: PROD_DATABASE_MLAB_URL,
     collection: 'sessions'
 });
 
@@ -69,9 +75,6 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
-// // // // // // // // // //
-// NOTE: when testing locally, change secure cookie to false and mute trust proxy setting
-// // // // // // // // // //
 
 // init passport
 app.use(passport.initialize());
@@ -89,12 +92,11 @@ app.use('/api/v1/allergens', allergenRouter);
 
 
 //  ----- server config section -----
-// functions for starting and stopping the server
-// and connecting to the db
+// functions for starting and stopping the server, and connecting to the db
 
 // a global variable needs to be declared here because
 // otherwise the stop server function wouldnt have access to
-// it, if it was declared inside of the start server function
+// it if it was declared inside of the start server function
 let server;
 
 function startServer(db) {
@@ -145,7 +147,7 @@ function stopServer() {
 // check if server was started directly via "node.js" or if it was started from another file via require
 // resource: https://nodejs.org/docs/latest/api/all.html#modules_accessing_the_main_module
 if (require.main === module) {
-    startServer(DATABASE_URL).catch(err => console.error(err));
+    startServer(PROD_DATABASE_MLAB_URL).catch(err => console.error(err));
 };
 
 module.exports = { app, startServer, stopServer };
