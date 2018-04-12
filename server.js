@@ -34,7 +34,7 @@ app.use(bodyParser.json());
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.header('Access-Control-Allow-Origin', 'https://peachofmind.netlify.com');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Headers', 'Origin,Accept,Content-Type,Authorization,Content-Length,X-Requested-With');
     res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE');
